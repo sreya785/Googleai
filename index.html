@@ -3,9 +3,349 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>SmartStudy AI & Community - Hackathon MVP</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
 </head>
-<body>
-    <h1>Hello World</h1>
+<body class="bg-slate-900 text-slate-100 font-sans antialiased">
+
+    <!-- Hackathon Banner -->
+    <div class="bg-gradient-to-r from-indigo-600 to-violet-600 text-white text-xs font-bold tracking-widest text-center py-1.5 uppercase shadow-md">
+        Google AI Hackathon MVP // AI Engine + Live Local Community Simulated
+    </div>
+
+    <!-- Navigation -->
+    <nav class="border-b border-slate-800 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="p-2 bg-indigo-600/20 border border-indigo-500/30 rounded-xl">
+                    <i data-lucide="sparkles" class="text-indigo-400 w-5 h-5 animate-pulse"></i>
+                </div>
+                <span class="text-lg font-black tracking-tight text-white">SmartStudy <span class="text-indigo-500">AI Hub</span></span>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="switchTab('community')" id="btn-tab-community" class="px-4 py-2 rounded-xl text-sm font-bold transition bg-indigo-600 text-white cursor-pointer">Community Feed</button>
+                <button onclick="switchTab('ai')" id="btn-tab-ai" class="px-4 py-2 rounded-xl text-sm font-medium transition text-slate-400 hover:text-white cursor-pointer">AI Workspace</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Workspace -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- VIEW 1: THE COMMUNITY HUB -->
+        <section id="view-community" class="space-y-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-5">
+                <div>
+                    <h1 class="text-2xl font-black text-white">Global Student Notes Exchange</h1>
+                    <p class="text-slate-400 text-sm">Browse notes from other universities or share your own to use the AI engine.</p>
+                </div>
+                <button onclick="openPublishModal()" class="flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-slate-950 px-5 py-2.5 rounded-xl font-bold transition shadow-lg cursor-pointer text-sm">
+                    <i data-lucide="plus" class="w-4 h-4"></i> Share My Notes
+                </button>
+            </div>
+
+            <!-- Community Feed Grid -->
+            <div id="communityFeed" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Injected via JavaScript -->
+            </div>
+        </section>
+
+        <!-- VIEW 2: AI INTERACTIVE ENGINE WORKSPACE -->
+        <section id="view-ai" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-8 animate-fadeIn">
+            
+            <!-- Left: Text Core Input (5 Columns) -->
+            <div class="lg:col-span-5 space-y-4">
+                <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 shadow-2xl relative">
+                    <div class="flex justify-between items-center mb-2">
+                        <h2 class="text-base font-bold text-white flex items-center gap-2">
+                            <i data-lucide="cpu" class="text-indigo-400 w-4 h-4"></i> Source Content Core
+                        </h2>
+                        <span id="activeContextBadge" class="text-[10px] bg-slate-900 border border-slate-800 text-slate-400 px-2 py-0.5 rounded-md font-mono">Custom Input</span>
+                    </div>
+                    
+                    <textarea id="rawNotesInput" rows="11" class="w-full bg-slate-900 border border-slate-800 focus:border-indigo-500/50 rounded-xl p-4 text-xs text-slate-300 outline-none transition resize-none placeholder:text-slate-600" placeholder="Type or paste notes here... Or click any note in the Community Feed to load it automatically!"></textarea>
+
+                    <div class="mt-4 grid grid-cols-3 gap-2">
+                        <button onclick="processAI('flashcards')" class="flex flex-col items-center justify-center p-3 bg-slate-900 hover:bg-indigo-950/40 border border-slate-800 hover:border-indigo-500/40 rounded-xl transition cursor-pointer group">
+                            <i data-lucide="layers" class="w-4 h-4 text-indigo-400 group-hover:scale-110 transition"></i>
+                            <span class="text-[10px] font-bold mt-1 text-slate-400">Flashcards</span>
+                        </button>
+                        <button onclick="processAI('quiz')" class="flex flex-col items-center justify-center p-3 bg-slate-900 hover:bg-violet-950/40 border border-slate-800 hover:border-violet-500/40 rounded-xl transition cursor-pointer group">
+                            <i data-lucide="help-circle" class="w-4 h-4 text-violet-400 group-hover:scale-110 transition"></i>
+                            <span class="text-[10px] font-bold mt-1 text-slate-400">Mock Quiz</span>
+                        </button>
+                        <button onclick="processAI('simplify')" class="flex flex-col items-center justify-center p-3 bg-slate-900 hover:bg-emerald-950/40 border border-slate-800 hover:border-emerald-500/40 rounded-xl transition cursor-pointer group">
+                            <i data-lucide="zap" class="w-4 h-4 text-emerald-400 group-hover:scale-110 transition"></i>
+                            <span class="text-[10px] font-bold mt-1 text-slate-400">Simplify</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: AI Output Canvas (7 Columns) -->
+            <div class="lg:col-span-7">
+                <div class="bg-slate-950 border border-slate-800 rounded-2xl min-h-[480px] p-6 shadow-2xl flex flex-col">
+                    <div id="aiLoader" class="hidden flex-1 flex-col items-center justify-center text-center">
+                        <div class="w-10 h-10 rounded-full border-4 border-indigo-500/20 border-t-indigo-500 animate-spin mb-3"></div>
+                        <p class="font-mono text-[11px] text-indigo-400 tracking-widest animate-pulse">RUNNING MODEL INFERENCE...</p>
+                    </div>
+
+                    <div id="aiEmptyState" class="flex-1 flex flex-col items-center justify-center text-center text-slate-500">
+                        <i data-lucide="terminal" class="w-10 h-10 text-slate-700 mb-3"></i>
+                        <h3 class="text-slate-300 font-bold text-sm">AI Output Generation Layer</h3>
+                        <p class="text-xs max-w-xs mt-1">Select an analytical generation feature on the left pane to initialize processing.</p>
+                    </div>
+
+                    <!-- Canvas Layers -->
+                    <div id="canvas-flashcards" class="hidden space-y-4 flex-1">
+                        <h3 class="font-bold text-xs text-indigo-400 tracking-wider uppercase flex items-center gap-2"><i data-lucide="layers" class="w-3.5 h-3.5"></i> Generated Study Deck</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="flashcardContainer"></div>
+                    </div>
+
+                    <div id="canvas-quiz" class="hidden space-y-4 flex-1">
+                        <div class="flex justify-between items-center">
+                            <h3 class="font-bold text-xs text-violet-400 tracking-wider uppercase flex items-center gap-2"><i data-lucide="help-circle" class="w-3.5 h-3.5"></i> Custom Mock Exam</h3>
+                            <span id="quizScoreBadge" class="hidden text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded font-mono">Passed</span>
+                        </div>
+                        <div id="quizContainer" class="space-y-4 pt-1"></div>
+                    </div>
+
+                    <div id="canvas-simplify" class="hidden space-y-4 flex-1">
+                        <h3 class="font-bold text-xs text-emerald-400 tracking-wider uppercase flex items-center gap-2"><i data-lucide="zap" class="w-3.5 h-3.5"></i> Simplified Context</h3>
+                        <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-slate-300 text-xs leading-relaxed whitespace-pre-wrap font-sans" id="simplifyContainer"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODAL: SHARE MY NOTES -->
+    <div id="publishModal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs hidden justify-center items-center z-50 p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl animate-scaleUp">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-base font-bold text-white flex items-center gap-2"><i data-lucide="globe" class="text-emerald-400 w-4 h-4"></i> Publish to Community Feed</h3>
+                <button onclick="closePublishModal()" class="text-slate-400 hover:text-white cursor-pointer"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form onsubmit="handlePublish(event)" class="space-y-3.5">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Your Name</label>
+                        <input type="text" id="formAuthor" required placeholder="e.g., Jane D." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">University</label>
+                        <input type="text" id="formUni" required placeholder="e.g., Stanford" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 outline-none focus:border-emerald-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">Note Subject Title</label>
+                    <input type="text" id="formTitle" required placeholder="e.g., Photosynthesis & Light Reactions" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1">The Study Notes (Full Text Content)</label>
+                    <textarea id="formBody" rows="5" required placeholder="Paste the actual note summary body text here..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 outline-none focus:border-emerald-500 resize-none"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs py-2.5 rounded-xl transition cursor-pointer shadow-md uppercase tracking-wider">Publish Note</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT SYSTEM ARCHITECTURE -->
+    <script>
+        // Setup Simulated Community Database inside localStorage if empty
+        if (!localStorage.getItem('community_notes')) {
+            const seedData = [
+                { id: 1, author: "Sarah Jenkins", university: "MIT", title: "Mitochondria Core Operations", body: "The mitochondria is widely considered the structural powerhouse of eukaryotic cells. Its fundamental objective is generating ATP molecules via aerobic cellular respiration cycles. It contains its own independent unique mitochondrial DNA strain separate from human nuclear genomics genomes.", date: "Just now" },
+                { id: 2, author: "Carlos R.", university: "UC Berkeley", title: "Introduction to Cellular Mitosis", body: "Mitosis is cellular replication division. The 4 main sequential stages are Prophase where chromatin threads condense into visible chromosomes, Metaphase where chromosomes alignment coordinates perfectly at the equatorial metaphase plate, Anaphase where paired sister chromatids forcefully disconnect transferring towards opposite cellular poles, and Telophase where double separate nuclear envelopes reconstruct structural integrity around isolated nuclei strings.", date: "2 hours ago" }
+            ];
+            localStorage.setItem('community_notes', JSON.stringify(seedData));
+        }
+
+        // View Router Switching Tabs
+        function switchTab(target) {
+            if (target === 'community') {
+                document.getElementById('view-community').classList.remove('hidden');
+                document.getElementById('view-ai').classList.add('hidden');
+                document.getElementById('btn-tab-community').className = "px-4 py-2 rounded-xl text-sm font-bold transition bg-indigo-600 text-white cursor-pointer";
+                document.getElementById('btn-tab-ai').className = "px-4 py-2 rounded-xl text-sm font-medium transition text-slate-400 hover:text-white cursor-pointer";
+            } else {
+                document.getElementById('view-community').classList.add('hidden');
+                document.getElementById('view-ai').classList.remove('hidden');
+                document.getElementById('btn-tab-ai').className = "px-4 py-2 rounded-xl text-sm font-bold transition bg-indigo-600 text-white cursor-pointer";
+                document.getElementById('btn-tab-community').className = "px-4 py-2 rounded-xl text-sm font-medium transition text-slate-400 hover:text-white cursor-pointer";
+            }
+            renderCommunityFeed();
+        }
+
+        function openPublishModal() { document.getElementById('publishModal').classList.replace('hidden', 'flex'); }
+        function closePublishModal() { document.getElementById('publishModal').classList.replace('flex', 'hidden'); }
+
+        // Render Feed
+        function renderCommunityFeed() {
+            const feed = document.getElementById('communityFeed');
+            const data = JSON.parse(localStorage.getItem('community_notes'));
+            feed.innerHTML = '';
+
+            data.forEach(item => {
+                feed.innerHTML += `
+                    <div class="bg-slate-950 border border-slate-800 rounded-2xl p-5 shadow-md flex flex-col justify-between hover:border-slate-700 transition">
+                        <div>
+                            <div class="flex justify-between text-[10px] text-slate-500 font-mono mb-2">
+                                <span>${item.university}</span>
+                                <span>${item.date}</span>
+                            </div>
+                            <h3 class="text-white font-bold text-base line-clamp-1 mb-2">${item.title}</h3>
+                            <p class="text-slate-400 text-xs line-clamp-3 mb-4 leading-relaxed">${item.body}</p>
+                        </div>
+                        <div class="pt-3 border-t border-slate-900 flex justify-between items-center">
+                            <span class="text-xs text-slate-400">By <b class="text-slate-300">${item.author}</b></span>
+                            <button onclick="loadIntoAIEngine('${escape(item.title)}', '${escape(item.body)}')" class="flex items-center gap-1.5 bg-indigo-600/10 border border-indigo-500/20 text-indigo-400 hover:bg-indigo-600 hover:text-white transition px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer">
+                                <i data-lucide="cpu" class="w-3.5 h-3.5"></i> Use AI Engine
+                            </button>
+                        </div>
+                    </div>`;
+            });
+            lucide.createIcons();
+        }
+
+        // Bridge Component: Sends community note to the AI Engine workspace layout
+        function loadIntoAIEngine(escapedTitle, escapedBody) {
+            document.getElementById('rawNotesInput').value = unescape(escapedBody);
+            document.getElementById('activeContextBadge').innerText = unescape(escapedTitle);
+            switchTab('ai');
+            // reset outputs
+            document.getElementById('aiEmptyState').classList.remove('hidden');
+            hideCanvasLayers();
+        }
+
+        // Action Pipeline Submission Form
+        function handlePublish(e) {
+            e.preventDefault();
+            const data = JSON.parse(localStorage.getItem('community_notes'));
+            
+            const newRecord = {
+                id: Date.now(),
+                author: document.getElementById('formAuthor').value,
+                university: document.getElementById('formUni').value,
+                title: document.getElementById('formTitle').value,
+                body: document.getElementById('formBody').value,
+                date: "Just now"
+            };
+
+            data.unshift(newRecord);
+            localStorage.setItem('community_notes', JSON.stringify(data));
+            e.target.reset();
+            closePublishModal();
+            renderCommunityFeed();
+        }
+
+        // --- AI EXECUTION SIMULATOR SUITE ENGINE ---
+        function processAI(action) {
+            const text = document.getElementById('rawNotesInput').value.trim();
+            if(!text) return alert("Please type or select a note framework first!");
+
+            document.getElementById('aiEmptyState').classList.add('hidden');
+            hideCanvasLayers();
+            document.getElementById('aiLoader').classList.remove('hidden');
+
+            setTimeout(() => {
+                document.getElementById('aiLoader').classList.add('hidden');
+                if(action === 'flashcards') runFlashcards(text);
+                else if(action === 'quiz') runQuiz(text);
+                else if(action === 'simplify') runSimplify(text);
+            }, 600);
+        }
+
+        function hideCanvasLayers() {
+            document.getElementById('canvas-flashcards').classList.add('hidden');
+            document.getElementById('canvas-quiz').classList.add('hidden');
+            document.getElementById('canvas-simplify').classList.add('hidden');
+        }
+
+        function runFlashcards(input) {
+            const container = document.getElementById('flashcardContainer');
+            container.innerHTML = '';
+            const sentences = input.match(/[^.!?]+[.!?]+/g) || [input];
+            
+            sentences.forEach((s, idx) => {
+                if(s.trim().length < 10) return;
+                const tokens = s.trim().split(' ');
+                const header = tokens.slice(0, 2).join(' ') + '...';
+                
+                container.innerHTML += `
+                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 min-h-[90px] flex flex-col justify-between cursor-pointer relative overflow-hidden" onclick="this.querySelector('.card-overlay').classList.toggle('opacity-0')">
+                        <div>
+                            <span class="text-[9px] text-indigo-400 font-bold uppercase tracking-wider block">Deck Core #${idx+1}</span>
+                            <p class="text-xs font-bold text-white mt-0.5">${header}</p>
+                        </div>
+                        <div class="card-overlay absolute inset-0 bg-slate-950 p-3 flex items-center justify-center text-center text-[11px] text-slate-300 opacity-0 transition-opacity duration-150 font-medium border border-indigo-500/20 rounded-xl">${s.trim()}</div>
+                    </div>`;
+            });
+            document.getElementById('canvas-flashcards').classList.remove('hidden');
+        }
+
+        function runQuiz(input) {
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = '';
+            document.getElementById('quizScoreBadge').classList.add('hidden');
+
+            const isMitosis = input.toLowerCase().includes('mitosis');
+            let qData = [{ q: "What primary core concept is highlighted within this text block?", a: ["Scientific Analysis Data", "Macro-structural Frameworks Integration", "Systematic Organic Engineering Process"], correct: 0 }];
+
+            if (isMitosis) {
+                qData = [
+                    { q: "What event cleanly maps to the Metaphase structural stage?", a: ["Chromosomes align on the equatorial plate", "Nuclear envelopes shatter permanently", "Chromatids separate to opposite poles"], correct: 0 },
+                    { q: "How many systematic stages map to Mitosis division sequences inside this file?", a: ["2 stages", "4 main sequential stages", "7 unique cycles"], correct: 1 }
+                ];
+            } else if (input.toLowerCase().includes('mitochondria')) {
+                qData = [
+                    { q: "What energy signature molecule is produced by the mitochondria respiratory path?", a: ["Lipid Ribosomes", "ATP Molecules", "Nuclear Nucleic Strand"], correct: 1 }
+                ];
+            }
+
+            qData.forEach((item, qIdx) => {
+                let optionsHTML = '';
+                item.a.forEach((opt, oIdx) => {
+                    optionsHTML += `
+                        <label class="flex items-center gap-2 bg-slate-900 border border-slate-800 p-2.5 rounded-xl cursor-pointer text-xs text-slate-300 font-medium">
+                            <input type="radio" name="q-${qIdx}" value="${oIdx}" class="accent-indigo-500">
+                            <span>${opt}</span>
+                        </label>`;
+                });
+                container.innerHTML += `
+                    <div class="q-block space-y-1.5" data-ans="${item.correct}">
+                        <h4 class="text-xs font-bold text-slate-200">${qIdx+1}. ${item.q}</h4>
+                        <div class="grid grid-cols-1 gap-1.5">${optionsHTML}</div>
+                    </div>`;
+            });
+            container.innerHTML += `<button onclick="gradeQuiz()" class="w-full bg-violet-600 hover:bg-violet-700 text-white font-bold text-xs py-2 rounded-xl uppercase transition mt-2 cursor-pointer">Grade Quiz</button>`;
+            document.getElementById('canvas-quiz').classList.remove('hidden');
+        }
+
+        function gradeQuiz() {
+            const elements = document.querySelectorAll('.q-block');
+            let verified = 0;
+            elements.forEach(el => {
+                const checked = el.querySelector('input:checked');
+                if(checked && checked.value === el.getAttribute('data-ans')) verified++;
+            });
+            const badge = document.getElementById('quizScoreBadge');
+            badge.innerText = `${verified} / ${elements.length} ACCURATE`;
+            badge.classList.remove('hidden');
+        }
+
+        function runSimplify(input) {
+            let out = input
+                .replace(/generating ATP molecules/gi, "making little batteries to power up your energy lines")
+                .replace(/cellular replication division/gi, "cells duplicating into matching identical twins")
+                .replace(/chromatin threads condense/gi, "tiny microscopic strings folding up into simple neat packs");
+            document.getElementById('simplifyContainer').innerHTML = `<strong>💡 ELI5 Simplified Summary Output:</strong>\n\n${out}`;
+            document.getElementById('canvas-simplify').classList.remove('hidden');
+        }
+
+        // Boot Init load sequence execution trigger
+        document.addEventListener("DOMContentLoaded", () => renderCommunityFeed());
+    </script>
 </body>
 </html>
